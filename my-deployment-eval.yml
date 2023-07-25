@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-api-deployment
+  labels:
+    app: mysql-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql-api
+  template:
+    metadata: 
+      labels: 
+        app: mysql-api
+    spec:
+      containers:
+      - name: api
+        image: pvaudin/api-k8s:1.0.1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql_password
+      - name: mysql
+        image: datascientest/mysql-k8s:1.0.0
+        ports:
+        - containerPort: 3306
+      
